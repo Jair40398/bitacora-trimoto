@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bitácora Trimoto TC2-160</title>
+<style>
+:root{--bg:#f4f6f4;--card:#fff;--tx:#1a1f1a;--mu:#5d675d;--bd:#d9dfd9;--ac:#1f7a3d;--acx:#fff;--bad:#c62828;--badbg:#fde7e7;--ok:#e6f4ea;--wb:#fff3cd;--w:#8a6d00}
+@media (prefers-color-scheme:dark){:root{--bg:#141714;--card:#1f241f;--tx:#eef2ee;--mu:#9aa59a;--bd:#333a33;--ac:#34c759;--acx:#08140b;--bad:#ff8a80;--badbg:#3a1d1d;--ok:#1b2e20;--wb:#3a321a;--w:#ffd54f;color-scheme:dark}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.4 Arial,Helvetica,sans-serif;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+main{max-width:640px;margin:0 auto;padding:14px}
+h1{font-size:19px;margin:6px 0 2px}h2{font-size:16px;margin:0 0 10px}
+.sub{color:var(--mu);font-size:13px;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+label{display:block;font-size:12px;color:var(--mu);margin:10px 0 3px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.chk label{display:flex;align-items:center;gap:8px;margin:0;padding:10px;border:1px solid var(--bd);border-radius:8px;font-size:14px;color:var(--tx)}
+.chk input{width:auto}
+button{font:inherit;border:0;border-radius:10px;padding:12px 16px;background:var(--ac);color:var(--acx);font-weight:bold;width:100%;margin-top:14px;cursor:pointer}
+button.sec{background:transparent;color:var(--tx);border:1px solid var(--bd);width:auto;margin:0;padding:8px 12px;font-weight:normal;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.item{border-top:1px solid var(--bd);padding:10px 0}.item:first-child{border-top:0}
+.top{display:flex;justify-content:space-between;gap:8px;font-weight:bold}
+.meta{color:var(--mu);font-size:13px;margin-top:2px}
+.b{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--ok);margin:4px 4px 0 0}
+.b.bad{background:var(--badbg);color:var(--bad);font-weight:bold}.b.warn{background:var(--wb);color:var(--w);font-weight:bold}
+.note{font-size:12px;color:var(--mu);margin-top:8px}
+.msg{padding:8px 10px;border-radius:8px;background:var(--ok);font-size:13px;margin-bottom:10px}.msg.bad{background:var(--badbg);color:var(--bad)}
+.al{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px;border-radius:10px;background:var(--ok);margin-bottom:8px}
+.al.bad{background:var(--badbg);color:var(--bad)}.al.warn{background:var(--wb);color:var(--w)}.al b{display:block}.al span{font-size:13px}
+svg .ln{fill:none;stroke:var(--bd);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+svg .dot{fill:var(--bd);cursor:pointer;stroke:transparent;stroke-width:2}svg .dot.ok{fill:var(--ac)}svg .dot.pen{fill:var(--bad)}svg .dot.sel{stroke:var(--tx)}
+svg text{fill:var(--mu);font-size:9px;text-anchor:middle;pointer-events:none;font-family:Arial,Helvetica,sans-serif}svg text.n{fill:var(--acx);font-weight:bold;font-size:10px}
+.chips{display:flex;gap:6px;overflow-x:auto;margin:8px 0 12px;padding-bottom:4px}
+.chip{width:auto;margin:0;padding:6px 10px;background:transparent;color:var(--tx);border:1px solid var(--bd);font-weight:normal;font-size:13px;white-space:nowrap;border-radius:99px}
+.chip.sel{border-color:var(--ac);color:var(--ac);font-weight:bold}
+.stat{display:flex;gap:22px;margin:6px 0}.stat b{font-size:22px;margin-right:6px}
+</style>
+</head>
+<body>
+<main>
+<h1>Parte diario – Trimoto eléctrica TC2-160</h1>
+<div class="sub" id="estado">Cargando…</div>
+
+<section class="card">
+<h2>Clave de escritura</h2>
+<input id="cl" type="password" autocomplete="off" placeholder="Necesaria para guardar, resolver o borrar">
+<div class="note">Cualquiera puede ver los datos; para escribir hace falta la clave.</div>
+</section>
+
+<section class="card">
+<h2>Mantenimiento</h2>
+<div id="alertas"></div>
+<div class="g2">
+<div><label for="pd">PSI delantera (42)</label><input id="pd" type="number" inputmode="decimal"></div>
+<div><label for="pt">PSI posterior (45)</label><input id="pt" type="number" inputmode="decimal"></div>
+</div>
+<div class="g2"><button id="mll">Registrar llantas</button><button id="mca">Registrar carga</button></div>
+<div id="avisoM" style="margin-top:10px"></div>
+</section>
+
+<section class="card">
+<h2>Nuevo registro</h2>
+<div id="aviso"></div>
+<label for="op">Operador</label>
+<input id="op" list="ops" autocomplete="off" placeholder="Nombre del operador"><datalist id="ops"></datalist>
+<div class="g2">
+<div><label for="fe">Fecha</label><input id="fe" type="date"></div>
+<div><label for="dst">Destino / actividad</label><input id="dst" placeholder="Ej: plataforma 38"></div>
+<div><label for="hs">Hora salida</label><input id="hs" type="time"></div>
+<div><label for="hr">Hora retorno</label><input id="hr" type="time"></div>
+<div><label for="bs">Batería % salida</label><input id="bs" type="number" inputmode="numeric" min="0" max="100"></div>
+<div><label for="br">Batería % retorno</label><input id="br" type="number" inputmode="numeric" min="0" max="100"></div>
+<div><label for="kg">Carga transportada (kg)</label><input id="kg" type="number" inputmode="numeric" min="0"></div>
+</div>
+<label>Revisión (marcar si está OK)</label>
+<div class="chk">
+<label><input type="checkbox" id="c1" checked> Frenos</label>
+<label><input type="checkbox" id="c2" checked> Luces y direccionales</label>
+<label><input type="checkbox" id="c3" checked> Llantas</label>
+<label><input type="checkbox" id="c4"> Cargó la batería</label>
+</div>
+<label for="ob">Observaciones / incidencias</label>
+<textarea id="ob" rows="3"></textarea>
+<button id="guardar">Guardar registro</button>
+<div class="note">Alertas: carga mayor a 500 kg (máximo del manual), batería de retorno menor a 20 % o una revisión sin marcar.</div>
+</section>
+
+<section class="card">
+<h2>Mapa de fallas</h2>
+<div class="sub">Qué se rompe y por qué. Toca un punto para filtrar.</div>
+<div class="stat"><span><b id="nf">0</b>fallas</span><span><b id="np">0</b>pendientes</span></div>
+<svg id="mapa" viewBox="0 0 360 205" width="100%" role="img" aria-label="Mapa de fallas de la trimoto"></svg>
+<div class="chips" id="chips"></div>
+<div id="avisoF"></div>
+<label for="fsis">Sistema con falla</label><select id="fsis"></select>
+<label for="fdes">Qué falló y por qué (operador: el del formulario de registro)</label>
+<textarea id="fdes" rows="3"></textarea>
+<button id="fguardar">Reportar falla</button>
+<div id="flista" style="margin-top:10px"></div>
+</section>
+
+<section class="card">
+<h2>Historial</h2>
+<div class="row" style="margin-bottom:10px"><select id="filtro" style="flex:1"></select><button class="sec" id="csv">Descargar CSV</button></div>
+<div id="resumen" class="meta" style="margin-bottom:6px"></div>
+<div id="lista"></div>
+</section>
+</main>
+<script>
+(function(){
+// ====== CONFIGURACIÓN: pega aquí los datos de tu proyecto Supabase (Project Settings > API) ======
+var CFG={URL:"https://lwrjiojuomxagofnhszl.supabase.co",KEY:"sb_publishable_W1qVqFz3LjIdqSkr7q5FQw_3P_hGHVz"};
+// La anon key es pública por diseño; la seguridad la dan las reglas del script SQL.
+var MAXKG=500,MINBAT=20;
+var $=function(i){return document.getElementById(i)};
+var S={rows:[],fall:[],mant:[],fil:"",pend:null};
+var SIS=[["bat","Batería",190,138],["mot","Motor",270,150],["fre","Frenos",70,150],["ctl","Controlador",135,108],["cab","Cableado / eléctrico",108,66],["luc","Luces",50,92],["lla","Llantas / suspensión",40,180],["otr","Otro / chasis",250,66]];
+function hoy(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function fmtF(s){var p=(s||"").split("-");return p.length==3?p[2]+"/"+p[1]+"/"+p[0]:(s||"")}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function sisN(id){for(var i=0;i<SIS.length;i++)if(SIS[i][0]===id)return SIS[i][1];return id}
+$("fe").value=hoy();$("op").value=lsGet("op","");$("cl").value=lsGet("cl","");
+
+function rest(path,opt){
+  opt=opt||{};opt.headers={apikey:CFG.KEY,"Content-Type":"application/json"};if(CFG.KEY.indexOf("eyJ")===0)opt.headers.Authorization="Bearer "+CFG.KEY;
+  return fetch(CFG.URL+"/rest/v1/"+path,opt).then(function(r){return r.text().then(function(t){var j=null;try{j=t?JSON.parse(t):null}catch(e){}
+    if(!r.ok)throw new Error((j&&j.message)||"Error de conexión");return j})});
+}
+function rpc(fn,args){args.p_clave=$("cl").value;lsSet("cl",args.p_clave);return rest("rpc/"+fn,{method:"POST",body:JSON.stringify(args)})}
+function errTxt(e){var m=e&&e.message||"error";return /clave/i.test(m)?"Clave incorrecta.":"No se pudo completar: "+m}
+function msg(id,t,bad){var a=$(id);a.textContent="";if(t){a.appendChild(el("div","msg"+(bad?" bad":""),t));setTimeout(function(){a.textContent=""},4500)}}
+function needKey(id){if(!$("cl").value){msg(id,"Escribe la clave de escritura.",true);return false}return true}
+
+function cargar(){
+  return Promise.all([rest("partes?select=*&order=fe.desc,created_at.desc&limit=400"),rest("fallas?select=*&order=created_at.desc&limit=300"),rest("mant?select=*&order=fe.desc&limit=200")]).then(function(r){
+    S.rows=r[0]||[];S.fall=(r[1]||[]).map(function(f){f.ts=Date.parse(f.created_at);return f});S.mant=r[2]||[];
+    $("estado").textContent="Datos compartidos · actualizado "+new Date().toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"});
+    renderAll();
+  }).catch(function(e){$("estado").textContent="No se pudo leer la base de datos: "+(e.message||"error")});
+}
+function renderAll(){render();renderF();renderM()}
+
+function alertas(r){var a=[];if(+r.kg>MAXKG)a.push("Sobrecarga: "+r.kg+" kg");if(r.br!=null&&r.br!==""&&+r.br<MINBAT)a.push("Batería baja al retorno");if(!r.c1)a.push("Frenos");if(!r.c2)a.push("Luces");if(!r.c3)a.push("Llantas");return a}
+function hhmm(s){return s?String(s).slice(0,5):""}
+
+function render(){
+  var rows=S.rows,ops={};rows.forEach(function(r){if(r.op)ops[r.op]=(ops[r.op]||0)+1});
+  var names=Object.keys(ops).sort(),dl=$("ops");dl.textContent="";names.forEach(function(n){var o=el("option");o.value=n;dl.appendChild(o)});
+  var f=$("filtro"),cur=f.value;f.textContent="";var o0=el("option",null,"Todos los operadores");o0.value="";f.appendChild(o0);
+  names.forEach(function(n){var o=el("option",null,n+" ("+ops[n]+")");o.value=n;f.appendChild(o)});f.value=names.indexOf(cur)>=0?cur:"";
+  var sel=f.value?rows.filter(function(r){return r.op===f.value}):rows;
+  var kg=0,cons=0,nc=0;sel.forEach(function(r){kg+=(+r.kg||0);if(r.bs!=null&&r.br!=null){cons+=(r.bs-r.br);nc++}});
+  $("resumen").textContent=sel.length+" registros · "+kg.toLocaleString("es-PE")+" kg transportados"+(nc?" · consumo promedio "+Math.round(cons/nc)+" % de batería":"");
+  var L=$("lista");L.textContent="";if(!sel.length){L.appendChild(el("div","meta","Todavía no hay registros."));return}
+  sel.slice(0,100).forEach(function(r){
+    var it=el("div","item"),t=el("div","top");t.appendChild(el("span",null,r.op||"Sin nombre"));t.appendChild(el("span",null,fmtF(r.fe)));it.appendChild(t);
+    var m=[];if(r.hs||r.hr)m.push((hhmm(r.hs)||"--")+" a "+(hhmm(r.hr)||"--"));
+    if(r.bs!=null)m.push("batería "+r.bs+" % → "+(r.br==null?"--":r.br+" %"));if(r.kg!=null)m.push(r.kg+" kg");
+    it.appendChild(el("div","meta",m.join(" · ")));if(r.dst)it.appendChild(el("div","meta",r.dst));
+    alertas(r).forEach(function(x){it.appendChild(el("span","b bad",x))});if(r.c4)it.appendChild(el("span","b","Cargó batería"));
+    if(r.ob)it.appendChild(el("div","meta","Obs.: "+r.ob));
+    it.appendChild(delBtn("partes",r.id,render));L.appendChild(it);
+  });
+}
+function delBtn(tabla,id,rr){
+  var d=el("button","sec",S.pend===id?"Toca otra vez para borrar":"Borrar");d.style.marginTop="6px";
+  d.onclick=function(){if(S.pend===id){S.pend=null;if(!needKey("aviso"))return;rpc("borrar_registro",{p_tabla:tabla,p_id:id}).then(cargar).catch(function(e){msg("aviso",errTxt(e),true)})}else{S.pend=id;rr()}};
+  return d;
+}
+function guardar(){
+  var r={op:$("op").value.trim(),fe:$("fe").value||hoy(),hs:$("hs").value,hr:$("hr").value,bs:$("bs").value,br:$("br").value,kg:$("kg").value,dst:$("dst").value.trim(),c1:$("c1").checked,c2:$("c2").checked,c3:$("c3").checked,c4:$("c4").checked,ob:$("ob").value.trim()};
+  if(!r.op){msg("aviso","Escribe el nombre del operador.",true);return}
+  if(!needKey("aviso"))return;lsSet("op",r.op);
+  rpc("guardar_parte",{p:r}).then(function(){
+    ["hs","hr","bs","br","kg","dst","ob"].forEach(function(i){$(i).value=""});$("c1").checked=$("c2").checked=$("c3").checked=true;$("c4").checked=false;
+    var a=alertas(r);msg("aviso",a.length?"Guardado. Alertas: "+a.join(", "):"Registro guardado.",a.length>0);return cargar();
+  }).catch(function(e){msg("aviso",errTxt(e),true)});
+}
+
+function renderF(){
+  var F=S.fall,cnt={},pen={};F.forEach(function(f){cnt[f.sis]=(cnt[f.sis]||0)+1;if(f.est!=="resuelta")pen[f.sis]=(pen[f.sis]||0)+1});
+  $("nf").textContent=F.length;$("np").textContent=F.filter(function(f){return f.est!=="resuelta"}).length;
+  var sel=$("fsis");if(!sel.options.length)SIS.forEach(function(s){var o=el("option",null,s[1]);o.value=s[0];sel.appendChild(o)});
+  var NS="http://www.w3.org/2000/svg";
+  function sv(t,a,c){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(c)e.setAttribute("class",c);return e}
+  var svg=$("mapa");svg.textContent="";
+  svg.appendChild(sv("circle",{cx:70,cy:150,r:30},"ln"));svg.appendChild(sv("circle",{cx:270,cy:150,r:30},"ln"));
+  svg.appendChild(sv("rect",{x:150,y:78,width:185,height:52,rx:4},"ln"));
+  svg.appendChild(sv("path",{d:"M70 150 L92 98 L72 84 M92 98 L150 98 M105 98 L105 58 L150 58 L150 78 M92 98 L150 130 L270 130"},"ln"));
+  SIS.forEach(function(s){
+    var n=cnt[s[0]]||0,p=pen[s[0]]||0,g=sv("g",{});
+    var c=sv("circle",{cx:s[2],cy:s[3],r:9+Math.min(n,4)*1.5},"dot"+(p?" pen":n?" ok":"")+(S.fil===s[0]?" sel":""));
+    c.onclick=function(){S.fil=S.fil===s[0]?"":s[0];if(S.fil)$("fsis").value=s[0];renderF()};g.appendChild(c);
+    if(n){var t=sv("text",{x:s[2],y:s[3]+3.5},"n");t.textContent=n;g.appendChild(t)}
+    var l=sv("text",{x:s[2],y:s[3]+22});l.textContent=s[1].split(" /")[0];g.appendChild(l);svg.appendChild(g);
+  });
+  var ch=$("chips");ch.textContent="";
+  var all=el("button","chip"+(S.fil?"":" sel"),"Todos "+F.length);all.onclick=function(){S.fil="";renderF()};ch.appendChild(all);
+  SIS.forEach(function(s){var b=el("button","chip"+(S.fil===s[0]?" sel":""),s[1].split(" /")[0]+" "+(cnt[s[0]]||0));b.onclick=function(){S.fil=S.fil===s[0]?"":s[0];if(S.fil)$("fsis").value=s[0];renderF()};ch.appendChild(b)});
+  var L=$("flista");L.textContent="";
+  var rows=F.filter(function(f){return !S.fil||f.sis===S.fil});
+  if(!rows.length){L.appendChild(el("div","meta","Sin fallas registradas."));return}
+  rows.slice(0,60).forEach(function(f){
+    var it=el("div","item"),t=el("div","top");t.appendChild(el("span",null,sisN(f.sis)));t.appendChild(el("span",null,fmtF(f.fe)));it.appendChild(t);
+    it.appendChild(el("div","meta",f.des||""));it.appendChild(el("div","meta","Reportó: "+(f.op||"sin nombre")));
+    it.appendChild(el("span","b"+(f.est==="resuelta"?"":" bad"),f.est==="resuelta"?"Resuelta":"Pendiente"));
+    var r=el("div","row");r.style.marginTop="6px";
+    if(f.est!=="resuelta"){var ok=el("button","sec","Marcar resuelta");ok.onclick=function(){if(!needKey("avisoF"))return;rpc("resolver_falla",{p_id:f.id}).then(cargar).catch(function(e){msg("avisoF",errTxt(e),true)})};r.appendChild(ok)}
+    var d=delBtn("fallas",f.id,renderF);d.style.marginTop="0";r.appendChild(d);it.appendChild(r);L.appendChild(it);
+  });
+}
+function guardarF(){
+  var des=$("fdes").value.trim();if(!des){msg("avisoF","Describe qué falló.",true);return}
+  if(!needKey("avisoF"))return;
+  rpc("guardar_falla",{p:{sis:$("fsis").value,des:des,op:$("op").value.trim(),fe:$("fe").value||hoy()}}).then(function(){$("fdes").value="";msg("avisoF","Falla reportada.");return cargar()}).catch(function(e){msg("avisoF",errTxt(e),true)});
+}
+
+// ====== Alertas de mantenimiento (según manual: llantas cada mes, batería al menos 1 vez por semana) ======
+function dias(f){return f?Math.floor((new Date(hoy()+"T00:00:00")-new Date(f+"T00:00:00"))/864e5):null}
+function nivel(d,amar,rojo){return d==null||d>rojo?"bad":d>=amar?"warn":""}
+function renderM(){
+  var ll=null,ca=null;
+  S.mant.forEach(function(m){if(m.tipo==="llantas"&&(!ll||m.fe>ll.fe))ll=m;if(m.tipo==="carga"&&(!ca||m.fe>ca))ca=m.fe});
+  S.rows.forEach(function(r){if(r.c4&&(!ca||r.fe>ca))ca=r.fe});
+  var A=$("alertas");A.textContent="";
+  var dl=ll?dias(ll.fe):null,dc=dias(ca&&ca.fe?ca.fe:ca);
+  var tx1=dl==null?"Sin registro de calibración":"Última calibración hace "+dl+" día"+(dl==1?"":"s");
+  var psi=ll&&((ll.psid!=null&&Math.abs(ll.psid-42)>3)||(ll.psit!=null&&Math.abs(ll.psit-45)>3))?" · última medición fuera de rango ("+ll.psid+"/"+ll.psit+" PSI)":"";
+  var tx2=dc==null?"Sin carga registrada":"Última carga hace "+dc+" día"+(dc==1?"":"s");
+  [["Llantas (cada mes: 42 / 45 PSI)",tx1+psi,nivel(dl,25,30)],["Batería (carga semanal)",tx2,nivel(dc,5,7)]].forEach(function(a){
+    var d=el("div","al "+a[2]),l=el("div");l.appendChild(el("b",null,a[0]));l.appendChild(el("span",null,a[1]));d.appendChild(l);
+    d.appendChild(el("span",null,a[2]==="bad"?"Vencido":a[2]==="warn"?"Por vencer":"Al día"));A.appendChild(d);
+  });
+}
+function regM(tipo){
+  if(!needKey("avisoM"))return;
+  var p={tipo:tipo,fe:hoy(),op:$("op").value.trim(),psid:tipo==="llantas"?$("pd").value:"",psit:tipo==="llantas"?$("pt").value:""};
+  rpc("guardar_mant",{p:p}).then(function(){$("pd").value=$("pt").value="";msg("avisoM","Mantenimiento registrado.");return cargar()}).catch(function(e){msg("avisoM",errTxt(e),true)});
+}
+
+function csv(){
+  var h=["fecha","operador","hora_salida","hora_retorno","bateria_salida","bateria_retorno","kg","destino","frenos_ok","luces_ok","llantas_ok","cargo_bateria","observaciones"];
+  var q=function(v){return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'},sn=function(b){return b?"Sí":"No"};
+  var out=[h.join(",")].concat(S.rows.map(function(r){return [r.fe,r.op,hhmm(r.hs),hhmm(r.hr),r.bs,r.br,r.kg,r.dst,sn(r.c1),sn(r.c2),sn(r.c3),sn(r.c4),r.ob].map(q).join(",")}));
+  var a=el("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+out.join("\n")],{type:"text/csv;charset=utf-8"}));a.download="bitacora_trimoto_"+hoy()+".csv";document.body.appendChild(a);a.click();a.remove();
+}
+$("guardar").onclick=guardar;$("fguardar").onclick=guardarF;$("csv").onclick=csv;$("filtro").onchange=render;
+$("mll").onclick=function(){regM("llantas")};$("mca").onclick=function(){regM("carga")};
+renderAll();
+if(CFG.URL.indexOf("TU-PROYECTO")>=0){$("estado").textContent="Falta configurar la conexión a Supabase (ver CFG al inicio del script)."}
+else{cargar();setInterval(function(){if(!document.hidden)cargar()},30000)}
+})();
+</script>
+</body>
+</html>
